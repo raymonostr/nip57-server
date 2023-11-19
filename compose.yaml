@@ -1,0 +1,21 @@
+# Comments are provided throughout this file to help you get started.
+# If you need more help, visit the Docker compose reference guide at
+# https://docs.docker.com/compose/compose-file/
+
+services:
+  tor_proxy:
+    image: peterdavehello/tor-socks-proxy:latest
+    restart: always
+  server:
+    build:
+      context: .
+    env_file:
+      - .env
+    depends_on:
+      - tor_proxy
+    links:
+      - tor_proxy
+    ports:
+      - 8000:${SERVER_PORT}
+    environment:
+      - SOCKS5H_PROXY=socks5h://tor_proxy:9150
