@@ -106,7 +106,7 @@ class NostrHelper:
                 relays.append(r)
         return relays
 
-    def confirm_payment(self, idx, event_9734_json, lnd_invoice_json) -> bool:
+    def confirm_payment(self, idx, event_9734_json, lnd_invoice_json):
         self._logger.info(f"Creating event kind 9735 for idx {idx}")
         self._logger.debug(f"Have 9734 Event: {event_9734_json}")
         self._logger.debug(f"Have LND invoice: {lnd_invoice_json}")
@@ -125,14 +125,12 @@ class NostrHelper:
         relays = self.add_default_relays(self.get_relays_from_9734(event_9734_json))
         self.send_event_9735(relays, nostr_event)
 
-        return True
-
     def send_event_9735(self, relays: list[str], event: Event):
         self._logger.info(f"Sending 9735 event to relays now")
         relay_manager = XRelayManager()
         for r in relays:
             relay_manager.add_x_relay(r, event, self._logger)
-        relay_manager.open_connections({"cert_reqs": ssl.CERT_NONE}) 
+        relay_manager.open_connections({"cert_reqs": ssl.CERT_NONE})
 
 
 if __name__ == '__main__':
