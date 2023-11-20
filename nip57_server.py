@@ -6,6 +6,7 @@ import urllib.parse
 
 from flask import Flask
 from flask import request
+from flask_cors import CORS
 from waitress import serve
 
 from lnd_helper import LndHelper
@@ -18,10 +19,12 @@ if __name__ == '__main__':
 
     app_logger = logging.getLogger("nip57Server")
     app = Flask("nip57Server")
+    CORS(app)
     LNURL_ORIGIN = os.environ.get("LNURL_ORIGIN", "http://localhost:8080")
     SERVER_PORT = os.environ.get("SERVER_PORT", "8080")
     MIN_SENDABLE = os.environ.get("MIN_SENDABLE", 1000)
     MAX_SENDABLE = os.environ.get("MAX_SENDABLE", 1000000000)
+    NIP57S_VERSION = "NIP57S V0.1.1"
     app_logger.debug("Loading file users.json")
     users_file = open('users.json')
     users: dict = json.load(users_file)
@@ -47,14 +50,16 @@ if __name__ == '__main__':
             "allowsNostr": True,
             "commentAllowed": 255,
             "status": "OK",
-            "nostrPubkey": users.get(username)
+            "nostrPubkey": users.get(username),
+            "server_version": NIP57S_VERSION
         }
 
 
     @app.route('/lnurlp/state')
     def state():
         return lnd_helper.lnd_state()
-    
+
+
     @app.route('/lnurlp/invoice/<string:username>')
     def invoice(username):
         app_logger.info("got lnurlp request for: " + username)
@@ -75,10 +80,10 @@ if __name__ == '__main__':
 
         lnd_helper.cache_payment(bech32_invoice["add_index"], urllib.parse.unquote_plus(nostr))
 
-        return {"pr": bech32_invoice["payment_request"], "routes": []}
+        return {"status": "OK", "pr": bech32_invoice["payment_request"], "routes": []}
 
 
-    app_logger.info("nip57_server starting on port " + str(SERVER_PORT))
+    app_logger.info(f"nip57_server {NIP57S_VERSION} starting on port " + str(SERVER_PORT))
     app_logger.info("author contact: nostr:npub1c3lf9hdmghe4l7xcy8phlhepr66hz7wp5dnkpwxjvw8x7hzh0pesc9mpv4")
     app_logger.info("GitHub: https://github.com/raymonostr/nip57-server")
     app_logger.info("Config LNURL_ORIGIN: " + str(LNURL_ORIGIN))

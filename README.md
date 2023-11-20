@@ -48,6 +48,32 @@ You'll need a tor proxy in SOCKS5H_PROXY. Use the docker compose if you don't ha
 - cp the tls.cert from your lnd instance to here
 - cp .env.example to .env and adjust the settings
 
+## Startup
+
+Start up and test looks like this:
+
+```
+docker logs nip57-server-server-1
+[2023-11-20 09:51:02,619 - DEBUG] Loading file users.json
+[2023-11-20 09:51:02,620 - DEBUG] Found 5 users in users.json
+[2023-11-20 09:51:02,623 - INFO] nip57_server starting on port 9080
+[2023-11-20 09:51:02,623 - INFO] author contact: nostr:npub1c3lf9hdmghe4l7xcy8phlhepr66hz7wp5dnkpwxjvw8x7hzh0pesc9mpv4
+[2023-11-20 09:51:02,623 - INFO] GitHub: https://github.com/raymonostr/nip57-server
+[2023-11-20 09:51:02,623 - INFO] Config LNURL_ORIGIN: https://nostrich.house
+[2023-11-20 09:51:02,623 - INFO] Config MIN_SENDABLE: 1000
+[2023-11-20 09:51:02,623 - INFO] Config MAX_SENDABLE: 400000000
+[2023-11-20 09:51:02,623 - INFO] Config DEFAULT_RELAYS: ['wss://nostr.mom/', 'wss://nostr-pub.wellorder.net/', 'wss://relay.damus.io/', 'wss://nos.lol/']
+[2023-11-20 09:51:02,623 - INFO] Config SOCKS5H_PROXY: socks5h://tor_proxy:9150
+[2023-11-20 09:51:02,623 - INFO] Config LND_RESTADDR: https://111111ck...
+[2023-11-20 09:51:02,623 - INFO] Config INVOICE_MACAROON: 1111111116402...
+[2023-11-20 09:51:02,623 - INFO] Config ZAPPER_KEY: 11111111105dab...
+[2023-11-20 09:51:02,625 - INFO] Serving on http://0.0.0.0:9080
+raymon# curl localhost:9080/lnurlp/state
+{"state":"SERVER_ACTIVE"}
+```
+
+The state request forwards to lnd rest /v1/state
+
 ## Issues welcome
 
 Feel free to post issues or merge requests or zap me.
