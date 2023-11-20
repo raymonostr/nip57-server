@@ -1,11 +1,19 @@
 # NIP57 Server
 
-A python server for lightning zaps in the Nostr network, facilitating a self hosted LND instance behind Tor.
+A python server for lightning zaps in the Nostr network, facilitating a self hosted LND instance behind Tor. 
+Use it to set up a server to recieve lightning zaps in The Nostr. Go self custody - not your keys, not your coins :-)
+It's an alternative for Wallet Of Satoshi or getalby.com - but only for tec people.
 
 ![image info](./doc/nip57s-components.png)
 
 > :warning: **This is Work In Progress**: It's not ready to be used by non-techs. Comment: I am used to code in C++ or
 > Java, my Python may be bumpy sometimes...
+
+## NIP-57 protocol flow
+The protocol is documented in Nostr [NIP-57](https://github.com/nostr-protocol/nips/blob/master/57.md) - my implementation
+looks like this:
+
+![image info](./doc/NIP-57_protocol_flow.png)
 
 ## What it does
 
