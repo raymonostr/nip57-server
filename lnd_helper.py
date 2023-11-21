@@ -31,21 +31,21 @@ class LndHelper:
     def fetch_invoice(self, amount: int, nostr_event_9734: str):
         if not self._listener_running:
             self.start_invoice_listener()
-        session = requests.session()
-        session.proxies = {'http': self.SOCKS5H_PROXY, 'https': self.SOCKS5H_PROXY}
-        description = nostr_event_9734
-        d_hash = hashlib.sha256(description.encode('UTF-8'))
-        b64_d_hash = base64.b64encode(d_hash.digest())
-        headers = {"Content-Type": "application/json; charset=utf-8",
-                   "Grpc-Metadata-macaroon": self.INVOICE_MACAROON}
-        data = {"value_msat": amount,
-                "description_hash": b64_d_hash.decode("UTF-8")}
-        json_data = json.dumps(data)
-        self._logger.debug("Sending to LND: ")
-        self._logger.debug(json_data)
-        response = session.post(self.LND_RESTADDR + "/v1/invoices", headers=headers, data=json_data,
-                                verify="./tls.cert")
-        self._logger.debug("LND response " + str(response.json()))
+        with requests.session() as session:
+            session.proxies = {'http': self.SOCKS5H_PROXY, 'https': self.SOCKS5H_PROXY}
+            description = nostr_event_9734
+            d_hash = hashlib.sha256(description.encode('UTF-8'))
+            b64_d_hash = base64.b64encode(d_hash.digest())
+            headers = {"Content-Type": "application/json; charset=utf-8",
+                       "Grpc-Metadata-macaroon": self.INVOICE_MACAROON}
+            data = {"value_msat": amount,
+                    "description_hash": b64_d_hash.decode("UTF-8")}
+            json_data = json.dumps(data)
+            self._logger.debug("Sending to LND: ")
+            self._logger.debug(json_data)
+            response = session.post(self.LND_RESTADDR + "/v1/invoices", headers=headers, data=json_data,
+                                    verify="./tls.cert")
+            self._logger.debug("LND response " + str(response.json()))
         if response.status_code != 200:
             self._logger.error("No 200 from lnd: ")
             self._logger.error(response.json())
@@ -61,14 +61,14 @@ class LndHelper:
 
     def lnd_state(self):
         url = self.LND_RESTADDR + '/v1/state'
-        session = requests.session()
-        session.proxies = {'http': self.SOCKS5H_PROXY, 'https': self.SOCKS5H_PROXY}
-        self._logger.debug("Requesting LND state")
-        try:
-            r = session.get(url, verify="./tls.cert")
-            return r.json()
-        except ConnectionRefusedError:
-            return {"status": "ERROR", "reason": "LND unreachable"}, 500
+        with requests.session() as session:
+            session.proxies = {'http': self.SOCKS5H_PROXY, 'https': self.SOCKS5H_PROXY}
+            self._logger.debug("Requesting LND state")
+            try:
+                r = session.get(url, verify="./tls.cert")
+                return r.json()
+            except ConnectionRefusedError:
+                return {"status": "ERROR", "reason": "LND unreachable"}, 500
 
     def _listen_for_invoices(self):
         url = self.LND_RESTADDR + '/v1/invoices/subscribe'
