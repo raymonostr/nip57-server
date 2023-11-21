@@ -60,6 +60,9 @@ class NostrHelper:
                 return inner_tags
         return []
 
+    def get_zapper_hexpub(self):
+        return self._public_key.hex()
+    
     def check_9734_event(self, nostr_json_encoded: str, amount: int) -> bool:
         """
         Check event for https://github.com/nostr-protocol/nips/blob/master/57.md App D

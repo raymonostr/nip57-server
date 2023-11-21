@@ -24,7 +24,7 @@ if __name__ == '__main__':
     SERVER_PORT = os.environ.get("SERVER_PORT", "8080")
     MIN_SENDABLE = os.environ.get("MIN_SENDABLE", 1000)
     MAX_SENDABLE = os.environ.get("MAX_SENDABLE", 1000000000)
-    NIP57S_VERSION = "NIP57S V0.1.1"
+    NIP57S_VERSION = "NIP57S V0.1.2"
     app_logger.debug("Loading file users.json")
     users_file = open('users.json')
     users: dict = json.load(users_file)
@@ -50,7 +50,7 @@ if __name__ == '__main__':
             "allowsNostr": True,
             "commentAllowed": 255,
             "status": "OK",
-            "nostrPubkey": users.get(username),
+            "nostrPubkey": nostr_helper.get_zapper_hexpub(),
             "server_version": NIP57S_VERSION
         }
 
