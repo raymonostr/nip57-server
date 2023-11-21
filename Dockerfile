@@ -12,7 +12,8 @@ WORKDIR /app
 
 # add deps for secp256k1
 RUN apt update && apt install -y pkg-config
-RUN apt install -y build-essential
+RUN apt install -y build-essential \
+RUN apt install -y curl
 
 # Create a non-privileged user that the app will run under.
 # See https://docs.docker.com/go/dockerfile-user-best-practices/
