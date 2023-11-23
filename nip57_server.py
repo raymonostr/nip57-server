@@ -2,6 +2,8 @@ import json
 import logging
 import os
 import sys
+import threading
+import time
 import urllib.parse
 
 from flask import Flask
@@ -24,7 +26,7 @@ if __name__ == '__main__':
     SERVER_PORT = os.environ.get("SERVER_PORT", "8080")
     MIN_SENDABLE = os.environ.get("MIN_SENDABLE", 1000)
     MAX_SENDABLE = os.environ.get("MAX_SENDABLE", 1000000000)
-    NIP57S_VERSION = "NIP57S V0.1.2"
+    NIP57S_VERSION = "NIP57S V0.8.0 beta"
     app_logger.debug("Loading file users.json")
     users_file = open('users.json')
     users: dict = json.load(users_file)
@@ -32,6 +34,12 @@ if __name__ == '__main__':
     app_logger.debug(f"Found {len(users)} users in users.json")
     nostr_helper: NostrHelper = NostrHelper(app_logger)
     lnd_helper: LndHelper = LndHelper(app_logger, nostr_helper)
+
+
+    def cleanup_cron():
+        time.sleep(20)
+        lnd_helper.cleanup_invoice_cache()
+        threading.Thread(target=cleanup_cron).start()
 
 
     @app.route('/.well-known/lnurlp/<string:username>')
@@ -60,9 +68,34 @@ if __name__ == '__main__':
         return lnd_helper.lnd_state()
 
 
+    @app.route('/lnurlp/set_clearnet')
+    def set_clearnet():
+        app_logger.debug("got set_clearnet request")
+
+        secret = request.args.get(key='secret', type=str)
+        if secret is None:
+            return {"status": "ERROR", "reason": "No secret given"}, 403
+
+        ipv4 = request.args.get(key='ipv4', type=str)
+        if ipv4 is None:
+            return {"status": "ERROR", "reason": "No valid IP given"}, 400
+
+        port = request.args.get(key='port', type=int)
+        if port is None:
+            port = lnd_helper.DYNIP_PORT
+
+        tls_verify = request.args.get(key='tls_verify', type=str)
+        if tls_verify is None:
+            tls_verify = lnd_helper.TLS_VERIFY
+        elif tls_verify.lower() == "false":
+            tls_verify = False
+
+        return lnd_helper.set_clearnet(ipv4=ipv4, secret=secret, port=port, tls_verify=tls_verify)
+
+
     @app.route('/lnurlp/invoice/<string:username>')
     def invoice(username):
-        app_logger.info("got lnurlp request for: " + username)
+        app_logger.info("got invoice request for: " + username)
 
         amount = request.args.get(key='amount', type=int)
         if amount is None:
@@ -94,5 +127,8 @@ if __name__ == '__main__':
     app_logger.info("Config LND_RESTADDR: " + str(lnd_helper.LND_RESTADDR)[:16] + "...")
     app_logger.info("Config INVOICE_MACAROON: " + str(lnd_helper.INVOICE_MACAROON)[:14] + "...")
     app_logger.info("Config ZAPPER_KEY: " + str(nostr_helper.ZAPPER_KEY)[:14] + "...")
+    app_logger.info("Config DYNIP_SECRET: " + str(lnd_helper.DYNIP_SECRET)[:3] + "...")
+    app_logger.info("Config TLS_VERIFY: " + str(lnd_helper.TLS_VERIFY))
 
+    threading.Thread(target=cleanup_cron).start()
     serve(app, host="0.0.0.0", port=SERVER_PORT)

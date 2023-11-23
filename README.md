@@ -56,7 +56,7 @@ Start up and test looks like this:
 docker logs nip57-server-server-1
 [2023-11-20 09:51:02,619 - DEBUG] Loading file users.json
 [2023-11-20 09:51:02,620 - DEBUG] Found 5 users in users.json
-[2023-11-20 09:51:02,623 - INFO] nip57_server starting on port 9080
+[2023-11-20 09:51:02,623 - INFO] nip57_server NIP57S V0.1.2 starting on port 9080
 [2023-11-20 09:51:02,623 - INFO] author contact: nostr:npub1c3lf9hdmghe4l7xcy8phlhepr66hz7wp5dnkpwxjvw8x7hzh0pesc9mpv4
 [2023-11-20 09:51:02,623 - INFO] GitHub: https://github.com/raymonostr/nip57-server
 [2023-11-20 09:51:02,623 - INFO] Config LNURL_ORIGIN: https://nostrich.house
@@ -67,12 +67,23 @@ docker logs nip57-server-server-1
 [2023-11-20 09:51:02,623 - INFO] Config LND_RESTADDR: https://111111ck...
 [2023-11-20 09:51:02,623 - INFO] Config INVOICE_MACAROON: 1111111116402...
 [2023-11-20 09:51:02,623 - INFO] Config ZAPPER_KEY: 11111111105dab...
+[2023-11-20 09:51:02,623 - INFO] Config DYNIP_SECRET: 7fy...
 [2023-11-20 09:51:02,625 - INFO] Serving on http://0.0.0.0:9080
 raymon# curl localhost:9080/lnurlp/state
 {"state":"SERVER_ACTIVE"}
 ```
 
 The state request forwards to lnd rest /v1/state
+
+## Dial-Up lines, Dyn-Ip
+
+Tor is sometimes slow, to slow for some zap clients like damus or Amethyst. With the Dial-Up Dyn-Ip feature, you can connect the
+nip57-server to lnd via clearnet. 
+
+Path for this is ```/lnurlp/set_clearnet?secret=xyz&ipv4=18.19.20.21&port=8080&tls_verify=False```
+
+The secret must be set in env.
+
 
 ## Issues welcome
 
@@ -81,3 +92,8 @@ Feel free to post issues or merge requests or zap me.
 Raymon[@nostr](nostr:npub1c3lf9hdmghe4l7xcy8phlhepr66hz7wp5dnkpwxjvw8x7hzh0pesc9mpv4)
 
 nostr:npub1c3lf9hdmghe4l7xcy8phlhepr66hz7wp5dnkpwxjvw8x7hzh0pesc9mpv4
+
+## Version history
+
+### NIP57S V0.8.0 beta
+- added DynIp DialUp feature
