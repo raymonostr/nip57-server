@@ -6,6 +6,7 @@ import threading
 import time
 import urllib.parse
 
+import requests
 from flask import Flask
 from flask import request
 from flask_cors import CORS
@@ -26,7 +27,7 @@ if __name__ == '__main__':
     SERVER_PORT = os.environ.get("SERVER_PORT", "8080")
     MIN_SENDABLE = os.environ.get("MIN_SENDABLE", 1000)
     MAX_SENDABLE = os.environ.get("MAX_SENDABLE", 1000000000)
-    NIP57S_VERSION = "NIP57S V0.8.0 beta"
+    NIP57S_VERSION = "NIP57S V0.8.1"
     app_logger.debug("Loading file users.json")
     users_file = open('users.json')
     users: dict = json.load(users_file)
@@ -37,7 +38,7 @@ if __name__ == '__main__':
 
 
     def cleanup_cron():
-        time.sleep(20)
+        time.sleep(113)  # whatever...
         lnd_helper.cleanup_invoice_cache()
         threading.Thread(target=cleanup_cron).start()
 
@@ -88,6 +89,7 @@ if __name__ == '__main__':
         if tls_verify is None:
             tls_verify = lnd_helper.TLS_VERIFY
         elif tls_verify.lower() == "false":
+            requests.packages.urllib3.disable_warnings()
             tls_verify = False
 
         return lnd_helper.set_clearnet(ipv4=ipv4, secret=secret, port=port, tls_verify=tls_verify)
@@ -112,6 +114,7 @@ if __name__ == '__main__':
             return {"status": "ERROR", "reason": "LND did not provide an invoice"}, 500
 
         lnd_helper.cache_payment(bech32_invoice["add_index"], urllib.parse.unquote_plus(nostr))
+        lnd_helper.start_invoice_listener()
 
         return {"status": "OK", "pr": bech32_invoice["payment_request"], "routes": []}
 

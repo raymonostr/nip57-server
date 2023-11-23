@@ -35,8 +35,6 @@ class LndHelper:
             self.TLS_VERIFY = False
 
     def fetch_invoice(self, amount: int, nostr_event_9734: str):
-        if not self._listener_running:
-            self.start_invoice_listener()
         with requests.Session() as session:
             session.proxies = {'http': self.SOCKS5H_PROXY, 'https': self.SOCKS5H_PROXY}
             description = nostr_event_9734
@@ -102,6 +100,8 @@ class LndHelper:
             self._listener_running = False
 
     def start_invoice_listener(self):
+        if self._listener_running:
+            return
         self._logger.info("Starting LND invoice listener")
         listener = threading.Thread(target=self._listen_for_invoices)
         listener.start()
