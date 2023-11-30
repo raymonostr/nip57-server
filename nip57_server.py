@@ -27,7 +27,7 @@ if __name__ == '__main__':
     SERVER_PORT = os.environ.get("SERVER_PORT", "8080")
     MIN_SENDABLE = os.environ.get("MIN_SENDABLE", 1000)
     MAX_SENDABLE = os.environ.get("MAX_SENDABLE", 1000000000)
-    NIP57S_VERSION = "NIP57S V0.8.1"
+    NIP57S_VERSION = "NIP57S V0.8.2"
     app_logger.debug("Loading file users.json")
     users_file = open('users.json')
     users: dict = json.load(users_file)
@@ -51,8 +51,8 @@ if __name__ == '__main__':
             return {"status": "ERROR", "reason": "User unknown"}, 404
         return {
             "callback": f"{LNURL_ORIGIN}/lnurlp/invoice/{username}",
-            "maxSendable": MAX_SENDABLE,
-            "minSendable": MIN_SENDABLE,
+            "maxSendable": int(MAX_SENDABLE),
+            "minSendable": int(MIN_SENDABLE),
             "metadata": [["text/identifier", username + "@" + parsed_url.netloc],
                          ["text/plain", "Sats for " + username]],
             "tag": "payRequest",
