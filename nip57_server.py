@@ -16,9 +16,9 @@ from lnd_helper import LndHelper
 from nostr_helper import NostrHelper
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.DEBUG, stream=sys.stdout,
+    logging.basicConfig(level=logging.INFO, stream=sys.stdout,
                         format="[%(asctime)s - %(levelname)s] %(message)s")
-    logging.getLogger().setLevel(logging.DEBUG)
+    logging.getLogger().setLevel(logging.INFO)
 
     app_logger = logging.getLogger("nip57Server")
     app = Flask("nip57Server")
@@ -27,7 +27,7 @@ if __name__ == '__main__':
     SERVER_PORT = os.environ.get("SERVER_PORT", "8080")
     MIN_SENDABLE = os.environ.get("MIN_SENDABLE", 1000)
     MAX_SENDABLE = os.environ.get("MAX_SENDABLE", 1000000000)
-    NIP57S_VERSION = "NIP57S V0.8.2"
+    NIP57S_VERSION = "NIP57S V1.0.0"
     app_logger.debug("Loading file users.json")
     users_file = open('users.json')
     users: dict = json.load(users_file)
@@ -97,11 +97,11 @@ if __name__ == '__main__':
 
     @app.route('/lnurlp/invoice/<string:username>')
     def invoice(username):
-        app_logger.info("got invoice request for: " + username)
-
         amount = request.args.get(key='amount', type=int)
         if amount is None:
             return {"status": "ERROR", "reason": "No valid amount given"}, 400
+
+        app_logger.info(f"got invoice request for {username} amount {str(amount)} sats")
 
         nostr = request.args.get(key='nostr', type=str)
         if nostr is None:
@@ -122,6 +122,7 @@ if __name__ == '__main__':
     app_logger.info(f"nip57_server {NIP57S_VERSION} starting on port " + str(SERVER_PORT))
     app_logger.info("author contact: nostr:npub1c3lf9hdmghe4l7xcy8phlhepr66hz7wp5dnkpwxjvw8x7hzh0pesc9mpv4")
     app_logger.info("GitHub: https://github.com/raymonostr/nip57-server")
+    app_logger.info("This software is provided AS IS without any warranty. Use it at your own risk.")
     app_logger.info("Config LNURL_ORIGIN: " + str(LNURL_ORIGIN))
     app_logger.info("Config MIN_SENDABLE: " + str(MIN_SENDABLE))
     app_logger.info("Config MAX_SENDABLE: " + str(MAX_SENDABLE))

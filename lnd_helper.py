@@ -59,7 +59,7 @@ class LndHelper:
         return response.json()
 
     def cache_payment(self, idx, event_kind_9734_json):
-        self._logger.info("caching open invoice" + idx)
+        self._logger.debug("caching open invoice " + idx)
         self._invoice_cache[idx] = {
             "timestamp": int(time.time()),
             "event": event_kind_9734_json,
@@ -84,7 +84,7 @@ class LndHelper:
         session = requests.Session()
         session.proxies = {'http': self.SOCKS5H_PROXY, 'https': self.SOCKS5H_PROXY}
         headers = {'Grpc-Metadata-macaroon': self.INVOICE_MACAROON}
-        self._logger.info("Sending invoice subscribe to LND")
+        self._logger.debug("Sending invoice subscribe to LND")
         response = session.get(url, headers=headers, stream=True, verify=self.TLS_VERIFY)
         try:
             for raw_response in response.iter_lines():
@@ -120,6 +120,9 @@ class LndHelper:
         if "settled" not in invoice:
             self._logger.error("No 'settled' in invoice from lnd: " + str(invoice))
             return True
+        if "value_msat" not in invoice:
+            self._logger.error("No 'value_msat' in invoice from lnd: " + str(invoice))
+            return True
         if not invoice["settled"]:
             self._logger.debug("Ignoring unsettled invoice from lnd: " + str(invoice))
             return True
@@ -127,6 +130,7 @@ class LndHelper:
             self._logger.error("No 'add_index' in invoice from lnd: " + str(invoice))
             return True
         idx = invoice["add_index"]
+        self._logger.info(f"Got payment of {str(invoice["value_msat"])} msats for idx {str(idx)}")
         self._logger.debug("Checking for invoice idx: " + str(idx))
         # improve: Thread lock these ops on _invoice_cache
         if idx not in self._invoice_cache:

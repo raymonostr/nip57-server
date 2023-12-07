@@ -110,7 +110,7 @@ class NostrHelper:
         return relays
 
     def confirm_payment(self, idx, event_9734_json, lnd_invoice_json):
-        self._logger.info(f"Creating event kind 9735 for idx {idx}")
+        self._logger.debug(f"Creating event kind 9735 for idx {idx}")
         self._logger.debug(f"Have 9734 Event: {event_9734_json}")
         self._logger.debug(f"Have LND invoice: {lnd_invoice_json}")
         nostr_9734 = json.loads(event_9734_json)
