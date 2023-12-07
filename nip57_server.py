@@ -27,7 +27,7 @@ if __name__ == '__main__':
     SERVER_PORT = os.environ.get("SERVER_PORT", "8080")
     MIN_SENDABLE = os.environ.get("MIN_SENDABLE", 1000)
     MAX_SENDABLE = os.environ.get("MAX_SENDABLE", 1000000000)
-    NIP57S_VERSION = "NIP57S V1.0.0"
+    NIP57S_VERSION = "NIP57S V1.0.1"
     app_logger.debug("Loading file users.json")
     users_file = open('users.json')
     users: dict = json.load(users_file)
@@ -101,7 +101,7 @@ if __name__ == '__main__':
         if amount is None:
             return {"status": "ERROR", "reason": "No valid amount given"}, 400
 
-        app_logger.info(f"got invoice request for {username} amount {str(amount)} sats")
+        app_logger.info(f"got invoice request for {username} amount {str(amount)} msats")
 
         nostr = request.args.get(key='nostr', type=str)
         if nostr is None:
@@ -122,6 +122,7 @@ if __name__ == '__main__':
     app_logger.info(f"nip57_server {NIP57S_VERSION} starting on port " + str(SERVER_PORT))
     app_logger.info("author contact: nostr:npub1c3lf9hdmghe4l7xcy8phlhepr66hz7wp5dnkpwxjvw8x7hzh0pesc9mpv4")
     app_logger.info("GitHub: https://github.com/raymonostr/nip57-server")
+    app_logger.info("A server to receive nostr nip-57 zaps to my own self-custodial LND server.")
     app_logger.info("This software is provided AS IS without any warranty. Use it at your own risk.")
     app_logger.info("Config LNURL_ORIGIN: " + str(LNURL_ORIGIN))
     app_logger.info("Config MIN_SENDABLE: " + str(MIN_SENDABLE))

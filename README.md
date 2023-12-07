@@ -54,21 +54,35 @@ Start up and test looks like this:
 
 ```
 docker logs nip57-server-server-1
-[2023-11-20 09:51:02,619 - DEBUG] Loading file users.json
-[2023-11-20 09:51:02,620 - DEBUG] Found 5 users in users.json
-[2023-11-20 09:51:02,623 - INFO] nip57_server NIP57S V0.1.2 starting on port 9080
-[2023-11-20 09:51:02,623 - INFO] author contact: nostr:npub1c3lf9hdmghe4l7xcy8phlhepr66hz7wp5dnkpwxjvw8x7hzh0pesc9mpv4
-[2023-11-20 09:51:02,623 - INFO] GitHub: https://github.com/raymonostr/nip57-server
-[2023-11-20 09:51:02,623 - INFO] Config LNURL_ORIGIN: https://nostrich.house
-[2023-11-20 09:51:02,623 - INFO] Config MIN_SENDABLE: 1000
-[2023-11-20 09:51:02,623 - INFO] Config MAX_SENDABLE: 400000000
-[2023-11-20 09:51:02,623 - INFO] Config DEFAULT_RELAYS: ['wss://nostr.mom/', 'wss://nostr-pub.wellorder.net/', 'wss://relay.damus.io/', 'wss://nos.lol/']
-[2023-11-20 09:51:02,623 - INFO] Config SOCKS5H_PROXY: socks5h://tor_proxy:9150
-[2023-11-20 09:51:02,623 - INFO] Config LND_RESTADDR: https://111111ck...
-[2023-11-20 09:51:02,623 - INFO] Config INVOICE_MACAROON: 1111111116402...
-[2023-11-20 09:51:02,623 - INFO] Config ZAPPER_KEY: 11111111105dab...
-[2023-11-20 09:51:02,623 - INFO] Config DYNIP_SECRET: 7fy...
-[2023-11-20 09:51:02,625 - INFO] Serving on http://0.0.0.0:9080
+[2023-12-07 08:53:08,658 - INFO] nip57_server NIP57S V1.0.1 starting on port 9080
+[2023-12-07 08:53:08,658 - INFO] author contact: nostr:npub1c3lf9hdmghe4l7xcy8phlhepr66hz7wp5dnkpwxjvw8x7hzh0pesc9mpv4
+[2023-12-07 08:53:08,658 - INFO] GitHub: https://github.com/raymonostr/nip57-server
+[2023-12-07 08:53:08,658 - INFO] A server to receive nostr nip-57 zaps to my own self-custodial LND server.
+[2023-12-07 08:53:08,658 - INFO] This software is provided AS IS without any warranty. Use it at your own risk.
+[2023-12-07 08:53:08,658 - INFO] Config LNURL_ORIGIN: https://nostrich.house
+[2023-12-07 08:53:08,659 - INFO] Config MIN_SENDABLE: 1000
+[2023-12-07 08:53:08,659 - INFO] Config MAX_SENDABLE: 400000000
+[2023-12-07 08:53:08,659 - INFO] Config DEFAULT_RELAYS: ['wss://nostr.mom/', 'wss://nostr-pub.wellorder.net/', 'wss://relay.damus.io/', 'wss://nos.lol/']
+[2023-12-07 08:53:08,659 - INFO] Config SOCKS5H_PROXY: socks5h://tor_proxy:9150
+[2023-12-07 08:53:08,659 - INFO] Config LND_RESTADDR: https://xxxxxxck...
+[2023-12-07 08:53:08,659 - INFO] Config INVOICE_MACAROON: xxxxxxx6e6402...
+[2023-12-07 08:53:08,659 - INFO] Config ZAPPER_KEY: xxxxxxxe05dab...
+[2023-12-07 08:53:08,659 - INFO] Config DYNIP_SECRET: 7fH...
+[2023-12-07 08:53:08,659 - INFO] Config TLS_VERIFY: ./tls.cert
+[2023-12-07 08:53:08,662 - INFO] Serving on http://0.0.0.0:9080
+
+# dynIP coming in:
+[2023-12-07 08:53:49,457 - INFO] LND Rest addr set to https://y.z.29.216:8080
+
+# zap coming in
+[2023-12-07 08:55:46,177 - INFO] got invoice request for siddhartha amount 21000 msats
+[2023-12-07 08:55:46,398 - INFO] Invoice cache length is 1
+[2023-12-07 08:55:46,398 - INFO] Starting LND invoice listener
+[2023-12-07 08:56:01,465 - INFO] Got payment of 21000 msats for idx 573
+[2023-12-07 08:56:01,468 - INFO] Sending 9735 event to relays now
+[2023-12-07 08:56:01,488 - INFO] LND invoice listener closed
+
+
 raymon# curl localhost:9080/lnurlp/state
 {"state":"SERVER_ACTIVE"}
 ```
