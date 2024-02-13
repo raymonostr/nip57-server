@@ -1,6 +1,7 @@
 import json
 import logging
 import os
+import re
 import sys
 import threading
 import time
@@ -27,7 +28,7 @@ if __name__ == '__main__':
     SERVER_PORT = os.environ.get("SERVER_PORT", "8080")
     MIN_SENDABLE = os.environ.get("MIN_SENDABLE", 1000)
     MAX_SENDABLE = os.environ.get("MAX_SENDABLE", 1000000000)
-    NIP57S_VERSION = "NIP57S V1.0.1"
+    NIP57S_VERSION = "NIP57S V1.1.0"
     app_logger.debug("Loading file users.json")
     users_file = open('users.json')
     users: dict = json.load(users_file)
@@ -35,6 +36,11 @@ if __name__ == '__main__':
     app_logger.debug(f"Found {len(users)} users in users.json")
     nostr_helper: NostrHelper = NostrHelper(app_logger)
     lnd_helper: LndHelper = LndHelper(app_logger, nostr_helper)
+
+
+    def checkNIP05Rules(name: str)->bool:
+        pattern = r"^[-a-z0-9._]+$"
+        return re.match(pattern, name.lower()) is not None
 
 
     def cleanup_cron():
@@ -46,9 +52,12 @@ if __name__ == '__main__':
     @app.route('/.well-known/lnurlp/<string:username>')
     def lnurlp(username):
         app_logger.debug("got lnurlp request for: " + username)
+        if checkNIP05Rules(username) is not True:
+            app_logger.warning(f"WARN: {username} is not a valid NIP-05 name")
+            return {"status": "ERROR", "reason": "User unknown"}, 404
         parsed_url = urllib.parse.urlparse(LNURL_ORIGIN)
         if users.get(username) is None:
-            return {"status": "ERROR", "reason": "User unknown"}, 404
+            app_logger.info(f"INFO: {username} is not in users.json list")
         return {
             "callback": f"{LNURL_ORIGIN}/lnurlp/invoice/{username}",
             "maxSendable": int(MAX_SENDABLE),
