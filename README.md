@@ -6,8 +6,7 @@ It's an alternative for Wallet Of Satoshi or getalby.com - but only for tec peop
 
 ![image info](./doc/nip57s-components.png)
 
-> :warning: **This is Work In Progress**: It's not ready to be used by non-techs. Comment: I am used to code in C++ or
-> Java, my Python may be bumpy sometimes...
+> :warning: **This is As-Is**: It worked from 9/23 till 4/24 without bugs. Now it's not maintained in this repo anymore, may or may not work. I dev it at another place to be a zap-bank.
 
 ## NIP-57 protocol flow
 The protocol is documented in Nostr [NIP-57](https://github.com/nostr-protocol/nips/blob/master/57.md) - my implementation
@@ -26,13 +25,6 @@ looks like this:
 - Listen at REST LND for invoice updates
 - Create the NIP-57 kind 9735 Event and deliver it to the relays.
 
-## What's missing
-
-- Final tests
-- Don't send around big amounts of money... it may fail.
-- Handsome manual - how to set up a server in a rented cloud env
-
-Estimated completion: End of 2023
 
 ## Prerequisites
 
